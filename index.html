@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة فصائل الدم</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .calculator {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>حاسبة فصائل الدم</h1>
+        <label for="fatherBlood">فصيلة دم الأب:</label>
+        <select id="fatherBlood">
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+
+        <label for="motherBlood">فصيلة دم الأم:</label>
+        <select id="motherBlood">
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+
+        <button onclick="calculate()">احسب</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const data = [
+        {"father": "A+", "mother": "A+", "a": 93.75, "b": 0.0, "ab": 0.0, "o": 6.25, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "A-", "mother": "A-", "a": 93.75, "b": 0.0, "ab": 0.0, "o": 6.25, "rhPlus": 0.0, "rhMinus": 100.0},
+            {"father": "O-", "mother": "B-", "a": 0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 0.0, "rhMinus": 100.0},
+            {"father": "A+", "mother": "A-", "a":93.75, "b": 0, "ab": 0.0, "o": 6.25, "rhPlus": 75.0, "rhMinus": 6.25},
+             {"father": "A+", "mother": "B-", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+           {"father":  "A+", "mother": "AB+", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0, "rhPlus": 93.75, "rhMinus": 6.25},
+           {"father": "A+", "mother": "AB-", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0, "rhPlus": 93.75, "rhMinus": 6.25}, 
+          {"father": "O+", "mother": "B+", "a": 0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 93.75, "rhMinus": 6.25},
+           {"father": "A-", "mother": "A+", "a": 93.75, "b": 0, "ab": 0, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+         {"father": "A-", "mother": "B-", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 0, "rhMinus": 100},
+         {"father": "A-", "mother": "O-", "a": 75.0, "b": 0, "ab": 0, "o": 25.0, "rhPlus": 0, "rhMinus": 100},
+        {"father": "A-", "mother": "AB+", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0, "rhPlus": 75.0, "rhMinus": 25.0},
+        {"father": "B-", "mother": "A+", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+     {"father": "A-", "mother": "AB-", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0, "rhPlus": 0, "rhMinus": 100},
+          {"father": "A-", "mother": "B+", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25,  "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B-", "mother": "O+", "a": 0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B+", "mother": "B+", "a": 0, "b": 93.75, "ab": 0.0, "o": 6.25, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "B+", "mother": "B-", "a": 0, "b": 93.75, "ab": 0.0, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B+", "mother": "A-", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B+", "mother": "O-", "a": 0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B+", "mother": "A+", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "B+", "mother": "O+", "a": 0, "b": 75, "ab": 0, "o": 25, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "B+", "mother": "AB+", "a": 12.5, "b": 50, "ab": 37.5, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "B+", "mother": "AB-", "a": 12.5, "b": 50, "ab": 37.5, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B-", "mother": "A-", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 0.0, "rhMinus": 100},
+            {"father": "B-", "mother": "B+", "a": 0, "b": 93.75, "ab": 0, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B-", "mother": "B-", "a": 0, "b": 93.75, "ab": 0, "o": 6.25, "rhPlus": 0.0, "rhMinus": 100},
+            {"father": "B-", "mother": "AB+", "a": 12.5, "b": 50, "ab": 37.5, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "B-", "mother": "AB-", "a": 12.5, "b": 50, "ab": 37.5, "o": 0.0, "rhPlus": 0.0, "rhMinus": 100},
+          {"father": "O+", "mother": "A-", "a": 75.0, "b": 0.0, "ab": 0.0, "o": 100, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "O+", "mother": "B-", "a": 0.0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O+", "mother": "O+", "a": 0.0, "b": 0.0, "ab": 0.0, "o": 100, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "O+", "mother": "O-", "a": 0.0, "b": 0.0, "ab": 0.0, "o": 100, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O+", "mother": "AB+", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "O+", "mother": "AB-", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O-", "mother": "A+", "a": 75.0, "b": 0.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O-", "mother": "B+", "a": 0.0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O-", "mother": "O+", "a": 0.0, "b": 0.0, "ab": 0.0, "o": 100, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O-", "mother": "AB+", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O-", "mother": "AB-", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 0.0, "rhMinus": 100},
+          {"father": "AB+", "mother": "A+", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "AB+", "mother": "A-", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "AB+", "mother": "O+", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "AB+", "mother": "O-", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+          {"father": "AB-", "mother": "A+", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 6.25, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "AB-", "mother": "A-", "a": 50.0, "b": 12.5, "ab": 37.5, "o": 0.0, "rhPlus": 0.0, "rhMinus": 100},
+          {"father": "AB-", "mother": "B-", "a": 12.5, "b": 50.0, "ab": 37.5, "o": 0., "rhPlus": 0.0, "rhMinus": 100},
+            {"father": "AB-", "mother": "O+", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "AB-", "mother": "O-", "a": 50.0, "b": 50.0, "ab": 0.0, "o": 0.0, "rhPlus": 0.0, "rhMinus": 100},
+          {"father": "O-", "mother": "A-", "a": 75, "b": 0.0, "ab": 0.0, "o": 25.0, "rhPlus": 0.0, "rhMinus": 100.0},
+            {"father": "AB+", "mother": "B+", "a": 12.5, "b": 50.0, "ab": 37.5, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+          {"father": "AB+", "mother": "B-", "a": 12.5, "b": 50.0, "ab": 37.5, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "AB-", "mother": "B+", "a": 12.5, "b": 50.0, "ab": 37.5, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "O+", "mother": "A+", "a": 75, "b": 0.0, "ab": 0.0, "o": 25.0, "rhPlus": 93.75, "rhMinus": 6.25},
+          {"father": "B-", "mother": "O-", "a": 0, "b": 75.0, "ab": 0.0, "o": 25.0, "rhPlus": 0.0, "rhMinus": 100.0},
+            {"father": "A+", "mother": "O-", "a": 75, "b": 0.0, "ab": 0.0, "o": 25.0, "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "A-", "mother": "O+", "a": 75, "b": 0.0, "ab": 0.0, "o": 100.0, "rhPlus": 93.75, "rhMinus": 6.25},
+            {"father": "O-", "mother": "O-", "a": 0, "b": 0.0, "ab": 0.0, "o": 100.0, "rhPlus": 0.0, "rhMinus": 100.0},
+            {"father": "A+", "mother": "O+", "a": 75.0, "b": 0.0, "ab": 0.0, "o": 25.0, "rhPlus": 93.75, "rhMinus": 6.25},  
+            {"father": "AB-", "mother": "AB-", "a":  25.0, "b": 25.0, "ab": 50.0, "o": 0.0, "rhPlus": 0.0, "rhMinus": 100.0}, 
+           {"father": "AB-", "mother": "AB+", "a":  25.0, "b": 25.0, "ab": 50.0, "o": 0.0, "rhPlus": 75.0, "rhMinus": 25.0}, 
+           {"father": "AB+", "mother": "AB+", "a":  25.0, "b": 25.0, "ab": 50.0, "o": 0.0, "rhPlus": 93.75, "rhMinus": 6.25},
+          {"father": "AB+", "mother": "AB-", "a":  25.0, "b": 25.0, "ab": 50.0, "o": 0.0,  "rhPlus": 75.0, "rhMinus": 25.0},
+            {"father": "A+", "mother": "B+", "a": 18.75, "b": 18.75, "ab": 56.25, "o": 6.25, "rhPlus": 93.75, "rhMinus": 6.25}
+        ];
+
+        function calculate() {
+            const father = document.getElementById("fatherBlood").value;
+            const mother = document.getElementById("motherBlood").value;
+
+            const result = data.find(row => row.father === father && row.mother === mother);
+
+            const resultDiv = document.getElementById("result");
+            if (result) {
+                resultDiv.innerHTML = `
+                    <p><strong>فصائل الدم المحتملة:</strong></p>
+                    <p>A: ${result.a}%</p>
+                    <p>B: ${result.b}%</p>
+                    <p>AB: ${result.ab}%</p>
+                    <p>O: ${result.o}%</p>
+                    <p>RH+: ${result.rhPlus}%</p>
+                    <p>RH-: ${result.rhMinus}%</p>
+                `;
+            } else {
+                resultDiv.innerHTML = "<p>لا توجد بيانات لهذه الفصائل.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>رابط مرجعي</title>
+    <style>
+        a {
+            color: #004080;
+            text-decoration: underline;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+        }
+        a:hover {
+            color: #002060;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        <a href="https://www.ncbi.nlm.nih.gov/books/NBK2261/" target="_blank">Click here for the reference!</a>
+    </p>
+</body>
+</html>
